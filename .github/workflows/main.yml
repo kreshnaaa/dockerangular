@@ -9,7 +9,6 @@ on:
 jobs:
   build-and-push:
     runs-on: ubuntu-latest
-
     steps:
     - name: Checkout code
       uses: actions/checkout@v2
@@ -23,7 +22,7 @@ jobs:
     - name: Build and push Docker image
       uses: docker/build-push-action@v2
       with:
-        context: .
-        file: ./Dockerfile
+        tags: krishna016016/dockerangular:latest
         push: true
-        tags: your-dockerhub-krishna016016/dockerangular:latest
+        file: ./Dockerfile
+        context: .
