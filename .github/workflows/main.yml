@@ -26,3 +26,11 @@ jobs:
         push: true
         file: ./Dockerfile
         context: .
+
+    - name: Deploy to Local Machine
+      run: |
+        ssh -o StrictHostKeyChecking=no username@local-ip " \
+        docker pull krishna016016/dockerangular:latest && \
+        docker stop deploydockerhub || echo 'No container to stop.' && \
+        docker rm deploydockerhub || echo 'No container to remove.' && \
+        docker run --name deploydockerhub -d -p 8080:80 krishna016016/dockerangular:latest"
