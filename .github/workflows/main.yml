@@ -33,6 +33,7 @@ jobs:
         env:
           SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
         run: |
+          mkdir -p ~/.ssh
           echo "$SSH_PRIVATE_KEY" > ~/.ssh/id_rsa
           chmod 600 ~/.ssh/id_rsa
           ssh -o StrictHostKeyChecking=no admin@192.168.29.84 " \
@@ -40,3 +41,10 @@ jobs:
           docker stop deploydockerhub || echo 'No container to stop.' && \
           docker rm deploydockerhub || echo 'No container to remove.' && \
           docker run --name deploydockerhub -d -p 8080:80 krishna016016/dockerangular:latest"
+
+          
+
+            
+            
+
+      
