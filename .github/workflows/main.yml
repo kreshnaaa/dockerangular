@@ -2,35 +2,41 @@ name: Angular CI/CD Pipeline
 
 on:
   push:
-    branches: [ main ]
+    branches:
+      - main
   pull_request:
-    branches: [ main ]
+    branches:
+      - main
 
 jobs:
   build-and-push:
     runs-on: ubuntu-latest
     steps:
-    - name: Checkout code
-      uses: actions/checkout@v2
+      - name: Checkout code
+        uses: actions/checkout@v2
 
-    - name: Log in to Docker Hub
-      uses: docker/login-action@v1
-      with:
-        username: ${{ secrets.DOCKER_HUB_USERNAME }}
-        password: ${{ secrets.DOCKER_HUB_ACCESS_TOKEN }}
+      - name: Log in to Docker Hub
+        uses: docker/login-action@v1
+        with:
+          username: ${{ secrets.DOCKER_HUB_USERNAME }}
+          password: ${{ secrets.DOCKER_HUB_ACCESS_TOKEN }}
 
-    - name: Build and push Docker image
-      uses: docker/build-push-action@v2
-      with:
-        tags: krishna016016/dockerangular:latest
-        push: true
-        file: ./Dockerfile
-        context: .
+      - name: Build and push Docker image
+        uses: docker/build-push-action@v2
+        with:
+          tags: krishna016016/dockerangular:latest
+          push: true
+          file: ./Dockerfile
+          context: .
 
-    - name: Deploy to Local Machine
-      run: |
-        ssh -o StrictHostKeyChecking=no admin@192.168.29.84 " \
-        docker pull krishna016016/dockerangular:latest && \
-        docker stop deploydockerhub || echo 'No container to stop.' && \
-        docker rm deploydockerhub || echo 'No container to remove.' && \
-        docker run --name deploydockerhub -d -p 8080:80 krishna016016/dockerangular:latest"
+      - name: Deploy to Local Machine
+        env:
+          SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
+        run: |
+          echo "$SSH_PRIVATE_KEY" > ~/.ssh/id_rsa
+          chmod 600 ~/.ssh/id_rsa
+          ssh -o StrictHostKeyChecking=no admin@192.168.29.84 " \
+          docker pull krishna016016/dockerangular:latest && \
+          docker stop deploydockerhub || echo 'No container to stop.' && \
+          docker rm deploydockerhub || echo 'No container to remove.' && \
+          docker run --name deploydockerhub -d -p 8080:80 krishna016016/dockerangular:latest"
