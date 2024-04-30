@@ -29,18 +29,14 @@ jobs:
           file: ./Dockerfile
           context: .
 
-      - name: Deploy to Local Machine
-        env:
-          SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
+      - name: Deploy to Local Machine      
         run: |
-          mkdir -p ~/.ssh
-          echo "$SSH_PRIVATE_KEY" > ~/.ssh/id_rsa
-          chmod 600 ~/.ssh/id_rsa
-          ssh -o StrictHostKeyChecking=no admin@192.168.29.84 " \
+          ssh -o StrictHostKeyChecking=no -i ${{ secrets.SSH_PRIVATE_KEY }} admin@192.168.29.84 " \
           docker pull krishna016016/dockerangular:latest && \
           docker stop deploydockerhub || echo 'No container to stop.' && \
           docker rm deploydockerhub || echo 'No container to remove.' && \
           docker run --name deploydockerhub -d -p 8080:80 krishna016016/dockerangular:latest"
+
 
           
 
