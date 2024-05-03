@@ -31,13 +31,16 @@ jobs:
 
       - name: Deploy to Local Machine
         run: |
+          # Log in to the local Docker registry
+          echo "${{ secrets.LOCAL_DOCKER_REGISTRY_PASSWORD }}" | docker login --username "${{ secrets.LOCAL_DOCKER_REGISTRY_USERNAME }}" --password-stdin localhost:5000
+
           # Pull the Docker image from Docker Hub
           docker pull krishna016016/dockerangular:latest
 
-          # Tag the Docker image for local use
+          # Tag the Docker image for the local registry
           docker tag krishna016016/dockerangular:latest localhost:5000/dockerangular:latest
 
-          # Push the Docker image to the local Docker Desktop
+          # Push the Docker image to the local Docker registry
           docker push localhost:5000/dockerangular:latest
 
           # Run the Docker container from the local image
