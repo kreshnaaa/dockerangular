@@ -28,16 +28,11 @@ jobs:
           push: true
           file: ./Dockerfile
           context: .
-     
-      - name: Set up SSH key
-        uses: webfactory/ssh-agent@v0.5.3
-        with:
-          ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
-       
-      - name: Deploy to Local Machine      
+
+      - name: Deploy to Local Machine
         run: |
-          ssh -o StrictHostKeyChecking=no admin@192.168.29.84 "powershell.exe -Command \"
-          docker pull krishna016016/dockerangular:latest; 
-          docker stop deploydockerhub -ErrorAction SilentlyContinue;
-          docker rm deploydockerhub -ErrorAction SilentlyContinue;
-          docker run --name deploydockerhub -d -p 8080:80 krishna016016/dockerangular:latest\""
+          ssh -o StrictHostKeyChecking=no -i ${{ secrets.DEPLOY_KEY }} admin@192.168.29.84 "powershell.exe -Command \
+            docker pull krishna016016/dockerangular:latest; \
+            docker stop deploydockerhub -ErrorAction SilentlyContinue; \
+            docker rm deploydockerhub -ErrorAction SilentlyContinue; \
+            docker run --name deploydockerhub -d -p 8080:80 krishna016016/dockerangular:latest"
