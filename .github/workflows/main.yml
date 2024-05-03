@@ -9,7 +9,7 @@ on:
       - main
 
 jobs:
-  build-and-push:
+  build-and-deploy:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
@@ -31,8 +31,14 @@ jobs:
 
       - name: Deploy to Local Machine
         run: |
-          ssh -o StrictHostKeyChecking=no -i ${{ secrets.DEPLOY_KEY }} admin@192.168.29.84 "powershell.exe -Command \
-            docker pull krishna016016/dockerangular:latest; \
-            docker stop deploydockerhub -ErrorAction SilentlyContinue; \
-            docker rm deploydockerhub -ErrorAction SilentlyContinue; \
-            docker run --name deploydockerhub -d -p 8080:80 krishna016016/dockerangular:latest"
+          # Pull the Docker image from Docker Hub
+          docker pull krishna016016/dockerangular:latest
+
+          # Tag the Docker image for local use
+          docker tag krishna016016/dockerangular:latest localhost:5000/dockerangular:latest
+
+          # Push the Docker image to the local Docker Desktop
+          docker push localhost:5000/dockerangular:latest
+
+          # Run the Docker container from the local image
+          docker run -d -p 8080:80 localhost:5000/dockerangular:latest
