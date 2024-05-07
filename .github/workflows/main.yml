@@ -1,5 +1,4 @@
 name: Angular CI/CD Pipeline
-
 on:
   push:
     branches:
